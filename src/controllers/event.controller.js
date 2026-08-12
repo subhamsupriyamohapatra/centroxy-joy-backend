@@ -4,6 +4,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const Event = require("../models/Event.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getEvents = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -47,8 +48,9 @@ const getEventById = asyncHandler(async (req, res) => {
 const createEvent = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.banner = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.banner = url;
+    data.image = url;
   }
 
   const item = await Event.create(data);
@@ -61,8 +63,9 @@ const createEvent = asyncHandler(async (req, res) => {
 const updateEvent = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.banner = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.banner = url;
+    data.image = url;
   }
 
   const item = await Event.findOne({ where: { id: req.params.id, isDeleted: false } });

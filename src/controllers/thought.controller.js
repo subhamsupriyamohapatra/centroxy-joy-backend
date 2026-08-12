@@ -4,6 +4,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const Thought = require("../models/Thought.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getThoughts = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -47,8 +48,9 @@ const getThoughtById = asyncHandler(async (req, res) => {
 const createThought = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.backgroundImage = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.backgroundImage = url;
+    data.image = url;
   }
 
   const item = await Thought.create(data);
@@ -61,8 +63,9 @@ const createThought = asyncHandler(async (req, res) => {
 const updateThought = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.backgroundImage = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.backgroundImage = url;
+    data.image = url;
   }
 
   const item = await Thought.findOne({ where: { id: req.params.id, isDeleted: false } });

@@ -4,6 +4,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const Participation = require("../models/Participation.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getParticipations = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -47,8 +48,9 @@ const getParticipationById = asyncHandler(async (req, res) => {
 const createParticipation = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.photo = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.photo = url;
+    data.image = url;
   }
 
   const item = await Participation.create(data);
@@ -61,8 +63,9 @@ const createParticipation = asyncHandler(async (req, res) => {
 const updateParticipation = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.photo = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.photo = url;
+    data.image = url;
   }
 
   const item = await Participation.findOne({ where: { id: req.params.id, isDeleted: false } });

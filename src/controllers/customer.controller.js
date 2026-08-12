@@ -4,6 +4,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const Customer = require("../models/Customer.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getCustomers = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -46,8 +47,9 @@ const getCustomerById = asyncHandler(async (req, res) => {
 const createCustomer = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.companyLogo = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.companyLogo = url;
+    data.image = url;
   }
 
   const item = await Customer.create(data);
@@ -60,8 +62,9 @@ const createCustomer = asyncHandler(async (req, res) => {
 const updateCustomer = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.companyLogo = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.companyLogo = url;
+    data.image = url;
   }
 
   const item = await Customer.findOne({ where: { id: req.params.id, isDeleted: false } });

@@ -4,6 +4,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const EmployeeMonth = require("../models/EmployeeMonth.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getEmployees = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -47,8 +48,9 @@ const getEmployeeById = asyncHandler(async (req, res) => {
 const createEmployee = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.photo = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.photo = url;
+    data.image = url;
   }
 
   const item = await EmployeeMonth.create(data);
@@ -61,8 +63,9 @@ const createEmployee = asyncHandler(async (req, res) => {
 const updateEmployee = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.photo = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.photo = url;
+    data.image = url;
   }
 
   const item = await EmployeeMonth.findOne({ where: { id: req.params.id, isDeleted: false } });

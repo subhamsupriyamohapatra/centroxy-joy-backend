@@ -4,6 +4,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const Birthday = require("../models/Birthday.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getBirthdays = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -47,8 +48,9 @@ const getBirthdayById = asyncHandler(async (req, res) => {
 const createBirthday = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.employeePhoto = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.employeePhoto = url;
+    data.image = url;
   }
 
   const item = await Birthday.create(data);
@@ -61,8 +63,9 @@ const createBirthday = asyncHandler(async (req, res) => {
 const updateBirthday = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.employeePhoto = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.employeePhoto = url;
+    data.image = url;
   }
 
   const item = await Birthday.findOne({ where: { id: req.params.id, isDeleted: false } });

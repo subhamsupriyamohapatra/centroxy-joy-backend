@@ -3,6 +3,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const Setting = require("../models/Setting.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getSettings = asyncHandler(async (req, res) => {
   let setting = await Setting.findOne();
@@ -23,7 +24,7 @@ const getSettings = asyncHandler(async (req, res) => {
 const updateSettings = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.companyLogo = `/uploads/${req.file.filename}`;
+    data.companyLogo = await uploadFile(req.file);
   }
 
   let setting = await Setting.findOne();

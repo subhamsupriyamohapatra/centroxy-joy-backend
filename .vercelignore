@@ -1,0 +1,10 @@
+# Never deploy local environment secrets
+.env
+.env.*
+
+# Local dev uploads (production uses Vercel Blob)
+src/uploads/
+
+# Logs
+logs
+*.log

@@ -17,7 +17,7 @@ async function connectDB() {
     await seedSetting();
   } catch (error) {
     console.error(`[Database Error] ${error.message}`);
-    process.exit(1);
+    throw error;
   }
 }
 

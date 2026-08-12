@@ -4,6 +4,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const Announcement = require("../models/Announcement.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getAnnouncements = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -46,8 +47,9 @@ const getAnnouncementById = asyncHandler(async (req, res) => {
 const createAnnouncement = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.bannerImage = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.bannerImage = url;
+    data.image = url;
   }
 
   const item = await Announcement.create(data);
@@ -60,8 +62,9 @@ const createAnnouncement = asyncHandler(async (req, res) => {
 const updateAnnouncement = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.bannerImage = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.bannerImage = url;
+    data.image = url;
   }
 
   const item = await Announcement.findOne({ where: { id: req.params.id, isDeleted: false } });

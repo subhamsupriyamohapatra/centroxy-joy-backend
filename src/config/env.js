@@ -19,6 +19,8 @@ module.exports = {
   adminUsername: process.env.ADMIN_USERNAME || "centroxy",
   adminPassword: process.env.ADMIN_PASSWORD || "centroxy2026",
   clientUrl: process.env.CLIENT_URL || "http://localhost:3000",
+  blobToken: process.env.BLOB_READ_WRITE_TOKEN || "",
+  cronSecret: process.env.CRON_SECRET || "",
   zoho: {
     clientId: process.env.ZOHO_CLIENT_ID || "",
     clientSecret: process.env.ZOHO_CLIENT_SECRET || "",

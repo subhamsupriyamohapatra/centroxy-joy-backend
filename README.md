@@ -1,17 +1,17 @@
 # Centroxy Joy Portal - Backend API
 
-Production-ready Express.js & MongoDB backend for **Centroxy Joy Portal**, built with Clean Architecture, MVC pattern, JWT Security, Socket.IO real-time updates, and Zoho integration.
+Production-ready Express.js & PostgreSQL backend for **Centroxy Joy Portal**, built with Clean Architecture, MVC pattern, JWT Security, Socket.IO real-time updates, and Zoho integration.
 
 ---
 
 ## 1. Tech Stack
 
 - **Node.js & Express.js**
-- **MongoDB & Mongoose**
+- **PostgreSQL & Sequelize** (ORM, auto table sync)
 - **JWT & bcryptjs** (Single Admin authentication)
-- **Multer** (File & Image uploads to `/uploads`)
+- **Multer + Vercel Blob** (Image uploads; local `/uploads` in development)
 - **Socket.IO** (Real-time `display-updated` broadcast)
-- **Node-Cron** (Daily 08:00 AM Zoho birthday sync)
+- **Vercel Cron** (Daily 08:00 AM Zoho birthday sync)
 - **Express-Validator** (Input validation)
 - **Security**: Helmet, CORS, Rate Limiting, Cookie-Parser, Compression
 
@@ -20,16 +20,30 @@ Production-ready Express.js & MongoDB backend for **Centroxy Joy Portal**, built
 ## 2. Environment Variables (`.env`)
 
 ```env
-PORT=5000
+PORT=5002
 NODE_ENV=development
-MONGO_URI=mongodb://127.0.0.1:27017/centroxy_joy_portal
-JWT_SECRET=centroxy_secret_key_2026_super_secure_token_key
+
+# PostgreSQL
+DATABASE_URL=postgresql://postgres:your_password@localhost:5432/centroxy_joy_portal
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_NAME=centroxy_joy_portal
+DB_USER=postgres
+DB_PASSWORD=your_password
+
+JWT_SECRET=your_jwt_secret_key_here
 JWT_EXPIRES=24h
 
 ADMIN_USERNAME=centroxy
 ADMIN_PASSWORD=centroxy2026
 
 CLIENT_URL=http://localhost:3000
+
+# Vercel Blob (required for image uploads in production)
+BLOB_READ_WRITE_TOKEN=your_vercel_blob_read_write_token
+
+# Vercel Cron protection (secret sent in Authorization header by Vercel Cron)
+CRON_SECRET=your_cron_secret
 
 ZOHO_CLIENT_ID=your_zoho_client_id
 ZOHO_CLIENT_SECRET=your_zoho_client_secret
@@ -52,11 +66,21 @@ npm install
 npm run dev
 ```
 
-The backend starts at `http://localhost:5000/api`.
+### Production
+```bash
+npm start
+```
+
+The backend starts at `http://localhost:5002/api`.
+
+> **Note:** On startup the app authenticates with PostgreSQL, auto-creates missing tables (`sequelize.sync`), and seeds a default Admin user and portal Settings.
 
 ---
 
 ## 4. API Reference
+
+### Health
+- `GET /health` -> Returns service health status
 
 ### Auth
 - `POST /api/auth/login` (Body: `username`, `password`) -> Returns JWT token
@@ -80,3 +104,4 @@ The backend starts at `http://localhost:5000/api`.
 ### Settings & Zoho
 - `GET /api/settings`, `PUT /api/settings`
 - `POST /api/zoho/sync` -> Manually triggers Zoho birthday sync
+- `POST /api/zoho/cron` -> Cron endpoint (Vercel Cron runs daily at 08:00, protected by `CRON_SECRET`)

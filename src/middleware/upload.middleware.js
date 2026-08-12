@@ -1,23 +1,31 @@
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const env = require("../config/env");
 
 const uploadDir = path.join(__dirname, "../uploads");
 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+if (env.nodeEnv !== "production" && !fs.existsSync(uploadDir)) {
+  try {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  } catch (error) {
+    console.warn(`[Upload] Could not create upload directory: ${error.message}`);
+  }
 }
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `upload-${uniqueSuffix}${ext}`);
-  },
-});
+const storage =
+  env.nodeEnv === "production"
+    ? multer.memoryStorage()
+    : multer.diskStorage({
+        destination: function (req, file, cb) {
+          cb(null, uploadDir);
+        },
+        filename: function (req, file, cb) {
+          const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+          const ext = path.extname(file.originalname).toLowerCase();
+          cb(null, `upload-${uniqueSuffix}${ext}`);
+        },
+      });
 
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif|webp|svg/;

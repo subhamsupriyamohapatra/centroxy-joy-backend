@@ -4,6 +4,7 @@ const { successResponse, errorResponse } = require("../utils/apiResponse");
 const IndustryNews = require("../models/IndustryNews.model");
 const logActivity = require("../utils/logger");
 const { emitDisplayUpdated } = require("../config/socket");
+const { uploadFile } = require("../services/blob.service");
 
 const getNews = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
@@ -47,8 +48,9 @@ const getNewsById = asyncHandler(async (req, res) => {
 const createNews = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.thumbnail = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.thumbnail = url;
+    data.image = url;
   }
 
   const item = await IndustryNews.create(data);
@@ -61,8 +63,9 @@ const createNews = asyncHandler(async (req, res) => {
 const updateNews = asyncHandler(async (req, res) => {
   const data = { ...req.body };
   if (req.file) {
-    data.thumbnail = `/uploads/${req.file.filename}`;
-    data.image = `/uploads/${req.file.filename}`;
+    const url = await uploadFile(req.file);
+    data.thumbnail = url;
+    data.image = url;
   }
 
   const item = await IndustryNews.findOne({ where: { id: req.params.id, isDeleted: false } });
