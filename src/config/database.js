@@ -6,7 +6,7 @@ const options = {
   logging: false,
 };
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" || env.databaseUrl) {
   options.dialectOptions = {
     ssl: { require: true, rejectUnauthorized: false },
   };
