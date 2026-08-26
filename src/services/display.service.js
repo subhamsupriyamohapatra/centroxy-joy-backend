@@ -6,6 +6,7 @@ const Announcement = require("../models/Announcement.model");
 const Event = require("../models/Event.model");
 const Participation = require("../models/Participation.model");
 const IndustryNews = require("../models/IndustryNews.model");
+const Banner = require("../models/Banner.model");
 
 class DisplayService {
   async getPublishedSlides() {
@@ -161,6 +162,21 @@ class DisplayService {
         image: n.thumbnail || n.image || "",
         badge: "Industry Insights",
         template: n.template,
+      });
+    }
+
+    // 9. Banners
+    const banners = await Banner.findAll({
+      where: { status: "published", isDeleted: false },
+      order: [["updatedAt", "DESC"]],
+    });
+    for (const b of banners) {
+      slides.push({
+        id: `banner-${b.id}`,
+        kind: "banner",
+        title: "",
+        image: b.image || "",
+        badge: "Banner",
       });
     }
 

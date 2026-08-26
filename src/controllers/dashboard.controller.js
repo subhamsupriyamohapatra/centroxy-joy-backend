@@ -8,6 +8,7 @@ const Announcement = require("../models/Announcement.model");
 const Event = require("../models/Event.model");
 const Participation = require("../models/Participation.model");
 const IndustryNews = require("../models/IndustryNews.model");
+const Banner = require("../models/Banner.model");
 const ActivityLog = require("../models/ActivityLog.model");
 
 const getDashboardSummary = asyncHandler(async (req, res) => {
@@ -26,6 +27,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     totalEvents,
     totalParticipations,
     totalNews,
+    totalBanners,
     recentActivities,
   ] = await Promise.all([
     Birthday.findAll({
@@ -58,6 +60,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     Event.count({ where: { isDeleted: false, status: "published" } }),
     Participation.count({ where: { isDeleted: false, status: "published" } }),
     IndustryNews.count({ where: { isDeleted: false, status: "published" } }),
+    Banner.count({ where: { isDeleted: false, status: "published" } }),
     ActivityLog.findAll({ order: [["createdAt", "DESC"]], limit: 10 }),
   ]);
 
@@ -70,6 +73,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
     totalEvents +
     totalParticipations +
     totalNews +
+    totalBanners +
     2; // Including Welcome & Thank You slides
 
   return successResponse(res, 200, "Dashboard data retrieved successfully", {
@@ -89,6 +93,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
       events: totalEvents,
       participations: totalParticipations,
       news: totalNews,
+      banners: totalBanners,
     },
     recentActivities,
   });
