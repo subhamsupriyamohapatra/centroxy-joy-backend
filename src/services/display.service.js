@@ -13,14 +13,14 @@ class DisplayService {
     const slides = [];
 
     // Welcome Slide
-    slides.push({
-      id: "slide-welcome",
-      kind: "welcome",
-      title: "Welcome to Centroxy",
-      subtitle: "Innovation • Excellence • Joy",
-      badge: "Portal Overview",
-      template: "glass",
-    });
+    // slides.push({
+    //   id: "slide-welcome",
+    //   kind: "welcome",
+    //   title: "Welcome to Centroxy",
+    //   subtitle: "Innovation • Excellence • Joy",
+    //   badge: "Portal Overview",
+    //   template: "glass",
+    // });
 
     // 1. Thoughts
     const thoughts = await Thought.findAll({
@@ -181,14 +181,14 @@ class DisplayService {
     }
 
     // Thank You Slide
-    slides.push({
-      id: "slide-thankyou",
-      kind: "thank-you",
-      title: "Thank You for Visiting Centroxy",
-      subtitle: "Empowering People • Driving Excellence",
-      badge: "Stay Connected",
-      template: "glass",
-    });
+    // slides.push({
+    //   id: "slide-thankyou",
+    //   kind: "thank-you",
+    //   title: "Thank You for Visiting Centroxy",
+    //   subtitle: "Empowering People • Driving Excellence",
+    //   badge: "Stay Connected",
+    //   template: "glass",
+    // });
 
     return slides;
   }
