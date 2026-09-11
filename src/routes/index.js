@@ -13,6 +13,7 @@ const eventRoutes = require("./event.routes");
 const participationRoutes = require("./participation.routes");
 const newsRoutes = require("./news.routes");
 const bannerRoutes = require("./banner.routes");
+const quoteRoutes = require("./quote.routes");
 const settingRoutes = require("./setting.routes");
 const zohoRoutes = require("./zoho.routes");
 
@@ -28,6 +29,7 @@ router.use("/events", eventRoutes);
 router.use("/participation", participationRoutes);
 router.use("/news", newsRoutes);
 router.use("/banners", bannerRoutes);
+router.use("/quotes", quoteRoutes);
 router.use("/settings", settingRoutes);
 router.use("/zoho", zohoRoutes);
 

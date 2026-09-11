@@ -15,7 +15,7 @@ const validate = require("../middleware/validate.middleware");
 router.get("/", protectAdmin, getThoughts);
 router.get("/:id", protectAdmin, getThoughtById);
 router.post("/", protectAdmin, upload.single("image"), thoughtValidator, validate, createThought);
-router.put("/:id", protectAdmin, upload.single("image"), updateThought);
+router.put("/:id", protectAdmin, upload.single("image"), thoughtValidator, validate, updateThought);
 router.delete("/:id", protectAdmin, deleteThought);
 
 module.exports = router;

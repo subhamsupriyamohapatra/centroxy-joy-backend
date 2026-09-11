@@ -7,6 +7,7 @@ const Event = require("../models/Event.model");
 const Participation = require("../models/Participation.model");
 const IndustryNews = require("../models/IndustryNews.model");
 const Banner = require("../models/Banner.model");
+const { activeThoughtRange } = require("../utils/dateRange");
 
 class DisplayService {
   async getPublishedSlides() {
@@ -24,7 +25,7 @@ class DisplayService {
 
     // 1. Thoughts
     const thoughts = await Thought.findAll({
-      where: { status: "published", isDeleted: false },
+      where: { status: "published", isDeleted: false, ...activeThoughtRange() },
       order: [["updatedAt", "DESC"]],
     });
     for (const t of thoughts) {

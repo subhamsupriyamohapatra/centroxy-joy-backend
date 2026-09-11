@@ -1,9 +1,26 @@
 const { body } = require("express-validator");
 
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
 const thoughtValidator = [
-  body("title").optional().trim(),
   body("quote").notEmpty().withMessage("Quote is required").trim(),
-  body("author").notEmpty().withMessage("Author is required").trim(),
+  body("author").optional().trim(),
+  body("startDate")
+    .notEmpty()
+    .withMessage("Start date is required")
+    .matches(DATE_PATTERN)
+    .withMessage("Start date must be in YYYY-MM-DD format"),
+  body("endDate")
+    .notEmpty()
+    .withMessage("End date is required")
+    .matches(DATE_PATTERN)
+    .withMessage("End date must be in YYYY-MM-DD format")
+    .custom((value, { req }) => {
+      if (req.body.startDate && value < req.body.startDate) {
+        throw new Error("End date must be on or after the start date");
+      }
+      return true;
+    }),
 ];
 
 const birthdayValidator = [

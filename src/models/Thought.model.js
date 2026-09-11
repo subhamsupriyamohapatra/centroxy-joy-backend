@@ -5,7 +5,7 @@ const Thought = sequelize.define(
   "Thought",
   {
     id: { type: DataTypes.UUID, defaultValue: DataTypes.UUIDV4, primaryKey: true },
-    title: { type: DataTypes.STRING, allowNull: false },
+    title: { type: DataTypes.STRING, allowNull: true },
     quote: { type: DataTypes.TEXT, allowNull: false },
     author: { type: DataTypes.STRING, allowNull: false },
     backgroundImage: { type: DataTypes.TEXT, defaultValue: "" },

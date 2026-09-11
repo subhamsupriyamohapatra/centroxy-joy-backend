@@ -17,7 +17,6 @@ const getThoughts = asyncHandler(async (req, res) => {
   if (status && status !== "all") where.status = status;
   if (search) {
     where[Op.or] = [
-      { title: { [Op.iLike]: `%${search}%` } },
       { quote: { [Op.iLike]: `%${search}%` } },
       { author: { [Op.iLike]: `%${search}%` } },
     ];
@@ -45,8 +44,21 @@ const getThoughtById = asyncHandler(async (req, res) => {
   return successResponse(res, 200, "Thought retrieved", item);
 });
 
+function deriveTitle(data) {
+  if (data.title && String(data.title).trim()) return data;
+  const words = (data.quote || "")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 6);
+  if (words.length > 0) {
+    return { ...data, title: `${words.join(" ")}…` };
+  }
+  return { ...data, title: "Thought of the Day" };
+}
+
 const createThought = asyncHandler(async (req, res) => {
-  const data = { ...req.body };
+  const data = deriveTitle({ ...req.body });
   if (req.file) {
     const url = await uploadFile(req.file);
     data.backgroundImage = url;
@@ -61,7 +73,7 @@ const createThought = asyncHandler(async (req, res) => {
 });
 
 const updateThought = asyncHandler(async (req, res) => {
-  const data = { ...req.body };
+  const data = deriveTitle({ ...req.body });
   if (req.file) {
     const url = await uploadFile(req.file);
     data.backgroundImage = url;

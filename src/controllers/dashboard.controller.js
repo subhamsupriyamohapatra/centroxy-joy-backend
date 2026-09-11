@@ -10,6 +10,7 @@ const Participation = require("../models/Participation.model");
 const IndustryNews = require("../models/IndustryNews.model");
 const Banner = require("../models/Banner.model");
 const ActivityLog = require("../models/ActivityLog.model");
+const { activeThoughtRange } = require("../utils/dateRange");
 
 const getDashboardSummary = asyncHandler(async (req, res) => {
   const [
@@ -35,7 +36,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
       order: [["createdAt", "DESC"]],
       limit: 5,
     }),
-    Thought.findOne({ where: { isDeleted: false, status: "published" }, order: [["createdAt", "DESC"]] }),
+    Thought.findOne({ where: { isDeleted: false, status: "published", ...activeThoughtRange() }, order: [["createdAt", "DESC"]] }),
     Event.findAll({
       where: { isDeleted: false, status: "published" },
       order: [["date", "ASC"]],
@@ -52,7 +53,7 @@ const getDashboardSummary = asyncHandler(async (req, res) => {
       order: [["createdAt", "DESC"]],
       limit: 5,
     }),
-    Thought.count({ where: { isDeleted: false, status: "published" } }),
+    Thought.count({ where: { isDeleted: false, status: "published", ...activeThoughtRange() } }),
     Birthday.count({ where: { isDeleted: false, status: "published" } }),
     EmployeeMonth.count({ where: { isDeleted: false, status: "published" } }),
     Customer.count({ where: { isDeleted: false, status: "published" } }),
